@@ -1,0 +1,7 @@
+div{
+    background: linear-gradient(135deg, rgba(142, 45, 226, 0.9), rgba(74, 0, 224, 0.9)),
+            url("https://www.transparenttextures.com/patterns/asfalt-light.png");
+    background-size: cover;
+    color: white;
+
+}
