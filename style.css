@@ -1,7 +1,51 @@
-div{
-    background: linear-gradient(135deg, rgba(142, 45, 226, 0.9), rgba(74, 0, 224, 0.9)),
-            url("https://www.transparenttextures.com/patterns/asfalt-light.png");
-    background-size: cover;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+.container{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #1c1d1f;
+}
+.navBar{
+    background-color: #39FF14;
+    display: flex;
+    justify-content: space-between;
+    width: 80%;
+    padding: 10px 20px;
+    margin-top: 10%;
+    border-radius: 8px;
+    margin-bottom: 3%;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border 0.3s ease;
+}
+.navBar:hover {
+  transform: scale(1.05); /* pop-out */
+  border: 1px solid rgba(57, 255, 20, 0.6); /* soft border */
+  box-shadow: 
+    0 0 8px rgba(57, 255, 20, 0.4),
+    0 0 16px rgba(57, 255, 20, 0.3);
+}
+.btntxt{
+    background-color: #1c1d1f;
     color: white;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: large;
 
+}
+.btntxt:hover{
+    background-color:#93a892 ;
+    color: #1c1d1f;
+}
+.taskStats{
+    padding: 10px;
+}
+.stat{
+    font-size: large;
+    font-weight: bold;
+    padding: 5px;
 }
