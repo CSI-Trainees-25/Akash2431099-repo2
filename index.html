@@ -10,16 +10,29 @@
     <div class="container">
         <nav class="navBar">
             <div class="task+">
-                <button class="task btntxt">Task</button>
-                <button class="+ btntxt">+</button>
+                <button class="taskBtn">Task</button>
+                <button class="addTaskBtn">+</button>
             </div>
-            <div class="taskStats">
+            <div class="taskStats" id="taskStats">
                 <span class="totalTasks stat">0</span><span class="stat">Task |</span> 
                 <span class="inProgressTasks stat">0</span> <span class="stat">In Progress |</span>  
-                <span class="doneTasks stat">0</span><span class="stat">Done |</span> 
-            </div>    
+                <span class="doneTasks stat">0</span><span class="stat">Done </span> 
+            </div>
         </nav>
+        <section id="main-box">
+            <div class="main-box">
+                <div class="tasks-info"></div>
+                <div class="do-now-box">
+                    <div class="do-now-row">
+                       <h1>Do Now</h1>
+                       <span>0 / 5</span>
+                    </div>
+                </div>
+                <div class="do-now-tasks"></div>
+            </div>
+        </section>
 
     </div>
+    <script src="./script.js" charset="UTF-8"></script>
 </body>
 </html>
