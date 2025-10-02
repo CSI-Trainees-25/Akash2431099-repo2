@@ -5,11 +5,12 @@
 }
 .container{
     width: 100%;
-    height: 100vh;
+    height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
+    background-image: linear-gradient(135deg,#efbaf7,#abe5f5);
 }
 .navBar{
     background-color:#7f32a8;
@@ -39,6 +40,61 @@
     font-weight: bold;
     font-size: larger;
 }
+.glow-on-hover {
+    color: #efbaf7;
+    cursor: pointer;
+    position: relative;
+    z-index: 0;
+    border-radius: 10px;
+}
+
+.glow-on-hover:before {
+    content: '';
+    background: linear-gradient(45deg, #c06fde, #efbaf7, #c06fde, #efbaf7);
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    background-size: 400%;
+    z-index: -1;
+    filter: blur(5px);
+    width: calc(100% + 4px);
+    height: calc(100% + 4px);
+    animation: glowing 8s linear infinite;
+    opacity: 0;
+    transition: opacity .3s ease-in-out;
+    border-radius: 10px;
+}
+
+.glow-on-hover:active {
+    color: #c06fde;
+}
+
+.glow-on-hover:active:after {
+    background: transparent;
+}
+
+.glow-on-hover:hover:before {
+    opacity: 1;
+}
+
+.glow-on-hover:after {
+    z-index: -1;
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: #c06fde;
+    left: 0;
+    top: 0;
+    border-radius: 10px;
+}
+
+@keyframes glowing {
+    0% { background-position: 0 0; }
+    50% { background-position: 400% 0; }
+    100% { background-position: 0 0; }
+}
+
 .taskStats{
     padding: 10px;
 }
@@ -53,7 +109,6 @@
   justify-content: center;
   align-items: flex-start;
   width: 80vw;
-  height: 60vw;
   background-color: white;
   border-radius: 8px;
   margin-bottom: 3%;
@@ -61,14 +116,21 @@
 }
 .main-box{
   width: 100%;
-  height: 100%;
+  
   display: grid;
   grid-template-columns: 5fr 3fr;
-  grid-template-rows: 1fr 1fr;
 }
 .tasks-info{
   border-right: 3px solid #7f32a8;
-  grid-area: 1/1/3/2;
+}
+.noTaskMsg{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color:#7f32a8;
+  font-size: xx-large;
+  font-weight: bolder;
+  height: 67vh;
 }
 .do-now-box{
   display: flex;
@@ -134,11 +196,13 @@
   font-size: x-large;
   font-weight: bold;
   padding: 10px;
+  display: flex;
+  flex-direction: column;
 }
 .moveToDoNowBox{
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: center; 
 }
 .moveToDoNowBtn{
   padding: 5px;
@@ -153,3 +217,65 @@
   border-radius: 25px;
   border: 1px solid rgba(0,0,0,0.5);
 }
+.statusSelect{
+  padding:5px;
+  border-radius: 25px 8px 8px 25px;
+  border: 1px solid rgba(0,0,0,0.5);;
+}
+.levelSelect{
+  padding:5px;
+  border-radius: 8px 25px 25px 8px ;
+  border: 1px solid rgba(0,0,0,0.5);
+  margin-left: 2px;
+}
+.dropDowns{
+  margin-top: 10px;
+  margin-bottom: 10px;
+ 
+}
+.dueDateBox{
+  display: flex;
+  flex-direction: column;
+  margin: 5px 5px 5px 5px;
+}
+.dueDateInput2{
+  padding: 5px;
+  border-radius: 8px;
+  margin-top: 5px;
+}
+.taskInputBox{
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  border: 3px solid #7f32a8;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  width: 40vw;
+
+}
+#taskNameInput{
+  padding: 10px;
+  border-radius: 8px;
+  background-image:linear-gradient(135deg,#efbaf7,#fff) ;
+  margin-bottom: 5px;
+}
+#dueDateInput{
+  padding: 10px;
+  border-radius: 8px;
+  background-image:linear-gradient(135deg,#efbaf7,#fff) ;
+  margin-bottom: 5px;
+}
+#saveTaskBtn{
+  padding: 10px;
+  border-radius: 8px;
+  background:#c06fde ;
+  margin-bottom: 5px;
+  margin-top: 5px;
+  width: 100px;
+}
+#saveTaskBtn:disabled {
+  background-color: gray;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+

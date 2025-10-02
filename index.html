@@ -10,8 +10,8 @@
     <div class="container">
         <nav class="navBar">
             <div class="task+">
-                <button class="taskBtn">Task</button>
-                <button class="addTaskBtn">+</button>
+                <button disabled class="taskBtn">Task</button>
+                <button class="addTaskBtn glow-on-hover ">+</button>
             </div>
             <div class="taskStats" id="taskStats">
                 <span class="totalTasks stat">0</span><span class="stat">Task |</span> 
@@ -19,16 +19,25 @@
                 <span class="doneTasks stat">0</span><span class="stat">Done </span> 
             </div>
         </nav>
+        <div class="taskInputBox" style="display: none;">
+           <input type="text" id="taskNameInput" placeholder="Enter task name">
+           <input type="date" id="dueDateInput">
+           <button class="glow-on-hover" id="saveTaskBtn">Add Task</button>
+        </div>
+
         <section id="main-box">
             <div class="main-box">
-                <div class="tasks-info"></div>
+                <div class="tasks-info">
+                    <div class="noTaskMsg">No Task</div>
+                </div>
                 <div class="do-now-box">
                     <div class="do-now-row">
                        <h1>Do Now</h1>
-                       <span>0 / 5</span>
+                        <div class="doNowRowB">
+                           <span class="completedTasksInDoNow">0</span><span>/</span><span class="totalTasksInDoNow">0</span>
+                        </div>
                     </div>
                 </div>
-                <div class="do-now-tasks"></div>
             </div>
         </section>
 
