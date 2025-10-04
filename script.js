@@ -1,7 +1,7 @@
 const addTaskBtn=document.querySelector('.addTaskBtn');
 const totalTaskEl=document.querySelector('.totalTasks');
 const inProgressTasksEl=document.querySelector('.inProgressTasks');
-const doneTasksEl=document.querySelector('.doneTasks')
+const doneTasksEl=document.querySelector('.doneTasks');
 const tasksInfo=document.querySelector('.tasks-info');
 const doNowTasks=document.querySelector('.do-now-box');
 const totalTasksInDoNowEl=document.querySelector(".totalTasksInDoNow");
@@ -15,6 +15,49 @@ let totalTasks=0;
 let totalTasksInDoNow=0;
 let inProgressTasks=0;
 let doneTasks=0;
+
+// 🔹 Load state from localStorage on refresh
+window.onload = () => {
+  const data = JSON.parse(localStorage.getItem("taskData"));
+  if(data){
+    totalTasks = data.totalTasks;
+    totalTasksInDoNow = data.totalTasksInDoNow;
+    inProgressTasks = data.inProgressTasks;
+    doneTasks = data.doneTasks;
+
+    totalTaskEl.textContent=totalTasks;
+    inProgressTasksEl.textContent=inProgressTasks;
+    doneTasksEl.textContent=doneTasks;
+    totalTasksInDoNowEl.textContent=totalTasksInDoNow;
+
+    // restore tasks
+    data.tasks.forEach(t=>{
+      addTask(t.name,t.dueDate,t.status,t.level,t.container,false);
+    })
+  }
+}
+
+function saveState(){
+  const tasks = [];
+  document.querySelectorAll('.task').forEach(task=>{
+    tasks.push({
+      name: task.querySelector('.taskName').textContent,
+      dueDate: task.querySelector('.dueDateInput2') ? task.querySelector('.dueDateInput2').textContent : "",
+      status: task.querySelector('.statusSelect') ? task.querySelector('.statusSelect').value : "notStarted",
+      level: task.querySelector('.levelSelect') ? task.querySelector('.levelSelect').value : "low",
+      container: task.parentElement.classList.contains("do-now-box") ? "doNow" : "main"
+    });
+  })
+
+  const data = {
+    totalTasks,
+    totalTasksInDoNow,
+    inProgressTasks,
+    doneTasks,
+    tasks
+  }
+  localStorage.setItem("taskData",JSON.stringify(data));
+}
 
 saveTaskBtn.disabled=true;
 
@@ -42,10 +85,11 @@ saveTaskBtn.addEventListener('click', () => {
     dueDateInput.value = "";
     taskInputBox.style.display = 'none';
     saveTaskBtn.disabled=true;
+    saveState();
   }
 });
 
-function addTask(name,dueDate){
+function addTask(name,dueDate,status="notStarted",level="low",container="main",save=true){
   totalTasks++;
   totalTaskEl.textContent=totalTasks;
 
@@ -57,7 +101,7 @@ function addTask(name,dueDate){
   <div class="dropDowns">
     <label> 
       <select class="statusSelect">
-        <option value="status" disabled selected>Status</option>
+        <option value="status" disabled>Status</option>
         <option value="done">Done</option>
         <option value="inProgress">In Progress</option>
         <option value="notStarted">Not Started</option>
@@ -65,7 +109,7 @@ function addTask(name,dueDate){
     </label>
     <label> 
       <select class="levelSelect">
-        <option value="level" disabled selected>Level</option>
+        <option value="level" disabled>Level</option>
         <option value="low">Low</option>
         <option value="medium">Medium</option>
         <option value="high">High</option>
@@ -78,10 +122,21 @@ function addTask(name,dueDate){
       <h4>Due Date</h4>
       <div class="dueDateInput2">${dueDate}</div>
     </div>
-    <button class="moveToDoNowBtn glow-on-hover">Move to do Now  ➜</button>
+    <button class="moveToDoNowBtn glow-on-hover">Move to do Now ➜</button>
   </div>`;
 
-  tasksInfo.appendChild(task);
+  // set dropdowns
+  task.querySelector('.statusSelect').value=status;
+  task.querySelector('.levelSelect').value=level;
+
+  if(container==="doNow"){
+    doNowTasks.appendChild(task);
+    totalTasksInDoNow++;
+    inProgressTasks++;
+  }else{
+    tasksInfo.appendChild(task);
+  }
+
   noTaskMessage();
   
   const levelSelect=task.querySelector('.levelSelect');
@@ -89,13 +144,13 @@ function addTask(name,dueDate){
 
   updateStatusColor(statusSelect,levelSelect);
 
-  statusSelect.addEventListener("change", ()=>updateStatusColor(statusSelect,levelSelect));
-  levelSelect.addEventListener("change", () =>updateStatusColor(statusSelect, levelSelect));
+  statusSelect.addEventListener("change", ()=>{updateStatusColor(statusSelect,levelSelect); saveState();});
+  levelSelect.addEventListener("change", () =>{updateStatusColor(statusSelect, levelSelect); saveState();});
   
   task.querySelector('.moveToDoNowBtn').addEventListener('click',()=>moveToDoNow(task));
+
+  if(save) saveState();
 }
-
-
 
 function noTaskMessage() {
   noTaskMsg.style.display = tasksInfo.querySelectorAll('.task').length === 0 ? 'block' : 'none';
@@ -109,64 +164,67 @@ function moveToDoNow(task){
   doNowTasks.appendChild(task)
 
   const moveBtn=task.querySelector('.moveToDoNowBtn');
-  moveBtn.textContent="Set Timer ⏱";
+  moveBtn.textContent="Start ⏱";
 
   moveBtn.replaceWith(moveBtn.cloneNode(true));
-  const setTimerBtn = task.querySelector('.moveToDoNowBtn');
+  const startBtn = task.querySelector('.moveToDoNowBtn');
 
-  setTimerBtn.addEventListener('click',()=>setTimer(task));
+  startBtn.addEventListener('click',()=>setTimer(task));
+  saveState();
 };
 
 function setTimer(task){
   const duration=30*60;
   let seconds=duration;
-  let interval=null;
-  let running =false;
 
-  const timerDisplay=task.querySelector('.timerDisplay') || (()=>{
-    const td=document.createElement('div');
-    td.classList.add('timerDisplay');
-    td.style.marginTop = "10px";
-    td.style.fontWeight = "bold";
-    td.textContent = `Time Left: 30:00`;
-    task.appendChild(td);
-    return td;
-  })();
+  let timerDisplay = task.querySelector('.timerDisplay');
+  if(!timerDisplay){
+    timerDisplay = document.createElement('div');
+    timerDisplay.classList.add('timerDisplay');
+    timerDisplay.style.marginTop = "10px";
+    timerDisplay.style.fontWeight = "bold";
+    timerDisplay.textContent = `Time Left: 30:00`;
+    task.appendChild(timerDisplay);
+  }
 
-  const btn=task.querySelector('.moveToDoNowBtn');
-  btn.textContent= "Pause ⏸";
+  const btn = task.querySelector('.moveToDoNowBtn');
+  btn.textContent = "Complete ✅";
+  btn.disabled = false;
 
-  function startCountdown(){
-  if(running)return;
-  running=true;
-  interval=setInterval(()=>{
+  // Clear any existing interval first
+  if(task.interval) clearInterval(task.interval);
+
+  task.interval = setInterval(()=>{
     seconds--;
     const mins=Math.floor(seconds/60);
     const secs = seconds % 60;
     timerDisplay.textContent = `Time Left: ${mins}:${secs < 10 ? '0' : ''}${secs}`;
     if(seconds<=0){
-      clearInterval(interval);
+      clearInterval(task.interval);
       timerDisplay.textContent="Times's Up!";
       timerDisplay.style.color="red";
-      btn.style.display="none";
+      btn.textContent="Complete ✅";
     }
   },1000);
-}
-function pauseCountdown(){
-  clearInterval(interval);
-  running=false;
-} 
-btn.onclick=()=>{
-  if(running){
-    pauseCountdown();
-    btn.textContent = "Resume ▶️";
+
+  btn.onclick = ()=>{
+    clearInterval(task.interval); // stop timer immediately
+    btn.disabled = true;
+    task.style.opacity = "0.6"; // optional visual completion
+
+    // Update stats
+    totalTasksInDoNow--;
+    doneTasks++;
+    inProgressTasks--;
+
+    totalTasksInDoNowEl.textContent = totalTasksInDoNow;
+    doneTasksEl.textContent = doneTasks;
+    inProgressTasksEl.textContent = inProgressTasks;
+
+    saveState();
   }
-  else {
-    startCountdown();
-    btn.textContent = "Pause ⏸";
-}};
-startCountdown();
 }
+
 function updateStatusColor(statusSelect,levelSelect){
   switch (statusSelect.value) {
       case "done":
@@ -203,4 +261,3 @@ function updateStatusColor(statusSelect,levelSelect){
         levelSelect.style.color = "";
   }
 }
- 
